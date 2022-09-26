@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>Computronick</title>
+        <f:event listener="#{CarritoC.listar()}" type="preRenderView"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
+
+    </h:head>
+    <body>
+    <p:separator/>
+    <h:form id="prueba">
+        <p:button icon="pi pi-shopping-cart" value="Carrrito" outcome="carrito"/>
+        
+
+        <h:form>
+
+            <p:dataGrid var="prod" value="#{CarritoC.listadoProd}" columns="3" layout="grid"
+                        id="productos">
+
+                <f:facet name="header">
+                    <h2>Productos</h2>
+                </f:facet>
+
+                <p:panel header="#{prod.codigo}" style="text-align:center">
+                    <h:panelGrid columns="1" style="width:100%" >
+                        <img src="Image/#{prod.imagen}.png" height=" 80 px"/>
+                        <h:outputText value="Nombre : #{prod.nombre}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Marca : #{prod.marca}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Descripcion : #{prod.descripcion}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Precio : #{prod.precio_venta}">
+                          <f:convertNumber type="currency" pattern="¤#0" currencySymbol="$" />
+                        </h:outputText>
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Stock : #{prod.stock}" />
+                        <h:outputText value="Stock : #{prod.imagen}" />
+                        <p:commandButton icon="pi pi-shopping-cart" value="Añadir" actionListener="#{CarritoC.agregar(prod.nombre)}" oncomplete="PF('wdlgcant').show()"/>
+                    </h:panelGrid>
+                </p:panel>
+
+            </p:dataGrid>
+            <p:dialog header="ingrese la cantidad" widgetVar="wdlgcant" id="dlgcant" >
+                <h:form>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Cantidad"/>
+                        <p:inputText value="#{CarritoC.pro.cantidadVender}" id="cantidad"/>
+                    </h:panelGrid>         
+                </h:form>
+                <center>
+                    <p:commandButton value="ok"  action="#{CarritoC.prueba()}" oncomplete="if(!args.validationFailed)PF('wdlgcant').hide();"/>
+                </center>
+
+            </p:dialog>
+        </h:form>
+
+
+
+
+    </h:form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

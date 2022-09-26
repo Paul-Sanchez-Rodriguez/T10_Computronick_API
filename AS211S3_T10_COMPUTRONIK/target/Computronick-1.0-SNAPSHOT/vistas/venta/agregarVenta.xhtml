@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+        </h:head>
+        <h:body>
+            <p:growl id="mensajes" severity="info, error" showDetail="true" showSummary="true" />
+            <center>
+
+                <h:form id="formFactura">
+                    <h2>Registro de Ventas</h2>
+                    <p:commandButton value="Cancelar Pedido" actionListener="#{VentasC.limpiar()}" update="formFactura:Factura formTabla:tablaprolis formTabla:txttotal" style="left: 32.5%"/>
+                    <p:separator/>
+                    <p:panelGrid columns="4" id="Factura">
+                        <p:outputLabel value="Nombre" />
+
+                        <p:autoComplete id="AutocompletarCleinet" value="#{VentasC.cli.nombrecompleto}" completeMethod="#{VentasC.autocompleteCliente}">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                            <p:ajax event="itemSelect" listener="#{VentasC.filtrado()}" update="txtApellido txtDireccion txtCelular mensajes"/>
+                        </p:autoComplete>
+
+                        <p:outputLabel value="Nombre del producto"/>
+                        <p:autoComplete id="AutocompletarProducto" value="#{VentasC.pro.nombre}" completeMethod="#{VentasC.autocompletePrueba}">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/" />
+                            <p:ajax event="itemSelect" listener="#{VentasC.mostrarDatos()}" update="txtStock txtPrecio"/>
+                        </p:autoComplete>
+
+
+
+                        <p:outputLabel value="Apellido y Nombre"/>
+                        <p:outputLabel id="txtApellido" value="#{VentasC.cli.nombrecompleto}" />
+
+
+                        <p:outputLabel value="Stock disponible"/>
+                        <p:outputLabel id="txtStock" value="#{VentasC.pro.stock}" />
+                        <p:outputLabel value="Direccion"/>
+                        <p:outputLabel id="txtDireccion" value="#{VentasC.cli.dirreccion}"/>
+                        <p:outputLabel  value="Precio"/>
+                        <p:outputLabel id="txtPrecio" value="#{VentasC.pro.precio_venta}">
+                            <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="$" />
+                        </p:outputLabel>
+                        <p:outputLabel value="Celular"/>
+                        <p:outputLabel id="txtCelular" value="#{VentasC.cli.celular}"/>
+                        <p:outputLabel value="Cantidad"/>
+                        <p:inputText value="#{VentasC.pro.cantidadVender}" id="cantidad">
+                            <p:keyFilter regEx="/[0-9]/" />
+                        </p:inputText>
+                        <p:outputLabel value="Fecha de Venta"/>
+                        <h:outputText value="#{VentasC.ven.fecha}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" locale="es"/>
+                        </h:outputText>
+                        <p:outputLabel value="Tipo de pago"/>
+                        <p:selectOneMenu id="tipo_de_pago"
+                                         styleClass="ticket"
+                                         style=" width: 225px"
+                                         value="#{VentasC.ven.tipoDePago}"
+                                         required="true" requiredMessage="Seleccione el tipo de pago">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar"  />
+                            <f:selectItem itemLabel="Efectivo" itemValue="E"/>
+                            <f:selectItem itemLabel="Tarjeta" itemValue="T"/>
+                        </p:selectOneMenu>
+                        
+                    </p:panelGrid>
+                    <p:spacer height="30 px"/>
+                    <p:commandButton value="Agregar" actionListener="#{VentasC.validadorRepetido(VentasC.pro)}" update="mensajes formTabla:tablaprolis txtStock txtPrecio cantidad AutocompletarProducto formTabla:txttotal"/>
+                    <p:spacer height="20 px"/>
+
+
+                    <p:spacer height="20 px"/>
+                    <p:commandButton value ="registrar Venta" actionListener="#{VentasC.registrarVenta(LoginC.emp.codigo)}"  oncomplete="PF('reporte').show()"  update="formTabla:tablaprolis formFactura:Factura formTabla:txttotal mensajes"/>
+                    <p:spacer height="20 px"/>
+
+                    <p:separator/>
+
+
+                </h:form>
+                <h:form>
+                    <p:confirmDialog widgetVar="reporte" showEffect="fade" width="300" 
+                                     message="¿Desea una boleta?" header="Boleta de Venta" severity="warn">
+                        <p:commandButton value="Generar" onclick="this.form.target = '_blank'; PF('reporte').hide()" 
+                                         ajax="false" title="Boleta" actionListener="#{VentasC.verReportePDFEST()}" icon="pi pi-print"/>
+
+                        <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                         onclick="PF('reporte').hide()"/>
+                    </p:confirmDialog>
+                </h:form>
+                <p:spacer height="20 px"/>
+                <h:form id="formTabla">
+                    <p:dataTable var="tblProlis" id="tablaprolis" value="#{VentasC.listarVentaDealle}" rows="20"
+                                 editable="true" editMode="cell"
+                                 editInitEvent="dblclick">
+
+                        <p:ajax event="cellEdit" listener="#{VentasC.actualizarTablaTemporal(VentasC.pro)}" update="formTabla:tablaprolis:jxtsubtotal mensajes formTabla:txttotal"/>
+
+
+                        <p:column headerText="Codigo Producto">
+                            <h:outputText value="#{tblProlis.codigoPRoducto}"  />
+                        </p:column>
+                        <p:column headerText="Nombre de Producto">
+                            <h:outputText value="#{tblProlis.nompro}"  />
+                        </p:column>
+                        <p:column headerText="Descripcion">
+                            <h:outputText value="#{tblProlis.descripcion}"  />
+                        </p:column>
+                        <p:column headerText="Stock">
+                            <h:outputText value="#{tblProlis.stock}"  />
+                        </p:column>
+                        <p:column headerText="Cantidad">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{tblProlis.cantidad}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{tblProlis.nuevacantidad}" style="width:100%" label="Cantidad">
+                                        <p:keyFilter regEx="/[0-9]/" />
+                                    </p:inputText>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Precio">
+                            <h:outputText value="#{tblProlis.prcio}"  />
+                        </p:column>
+                        <p:column headerText="Subtotal" >
+                            <h:outputText value="#{tblProlis.subtotal}" id="jxtsubtotal" />
+                        </p:column>
+                        <p:column headerText="Eliminar">
+                            <p:commandButton value="X" actionListener="#{VentasC.elimianarProductoAgregado(tblProlis.codigoPRoducto)}" update="formTabla:tablaprolis formTabla:txttotal" style="background-color: coral"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <div style="font-weight: bold;float: right">
+                        <h:outputLabel value="Total:"/>
+                        <h:outputLabel value="#{VentasC.total}" id="txttotal"/>  
+                    </div>
+
+                    <p:separator/>
+                </h:form>
+
+
+
+            </center>    
+        </h:body>
+    </ui:define>
+
+</ui:composition>

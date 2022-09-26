@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+            <f:event listener="#{ClienteC.listar()}" type="preRenderView" />
+        </h:head>
+        <h:body>
+            <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+
+            <center>
+                <h2>Registro de Clientes</h2>
+                <p:spacer height="30"/>   
+                <h:form id="Regis">
+                    <p:panelGrid columns="2" >
+                        <p:outputLabel value="DNI" />
+                        <p:commandButton value="Buscar" action="#{ClienteC.consumientdoApi()}" update="Regis">
+                            <p:inputText value="#{ClienteC.cli.dni}" maxlength="8"  id="DNI" required="true" >
+                                <p:keyFilter regEx="/[0-9]/" />
+                                <f:validateLength minimum="8" />
+                            </p:inputText>
+                        </p:commandButton>
+                        <p:outputLabel value="Nombre" />
+                        <p:inputText value="#{ClienteC.cli.nombre}" maxlength="20" id="nombre" disabled="#{ClienteC.nombre}" required="true" requiredMessage="Completar con su nombre">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Apellido" />
+                        <p:inputText value="#{ClienteC.cli.apellido}" maxlength="20" id="apellido" disabled="#{ClienteC.apellido}" required="true" requiredMessage="Completar con su Apellido">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/" />
+                        </p:inputText>                     
+                        <p:outputLabel value="Celular" />
+                        <p:inputText value="#{ClienteC.cli.celular}" maxlength="9" id="celular" disabled="#{ClienteC.celular}" required="true" requiredMessage="Completar con su numero de Celular">
+                            <p:keyFilter regEx="/[0-9]/" />
+                            <f:validateLength minimum="9" />
+                        </p:inputText>
+                        <p:outputLabel value="Direccion" />
+                        <p:inputText value="#{ClienteC.cli.dirreccion}" maxlength="20" id="direccion" disabled="#{ClienteC.direccion}" required="true" requiredMessage="Completar con su direccion"/>
+
+                        <p:outputLabel value="Distrito" />
+
+                        <p:selectOneMenu id="txtUBICLI"
+                                         value="#{ClienteC.cli.ubigeo}" styleClass="ticket"
+                                         autoWidth="true" disabled="#{ClienteC.distrito}" required="true" requiredMessage="seleccionar su distrito">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar" />
+                            <f:selectItems value="#{ClienteC.listarUbig()}" var="ubi"
+                                           itemValue="#{ubi.codigo}"
+                                           itemLabel="#{ubi.depubi},#{ubi.provubi}, #{ubi.disubi}" />
+                        </p:selectOneMenu>
+
+
+                    </p:panelGrid>
+                    <p:spacer height="50"/>
+                    <p:commandButton value="Registrar" actionListener="#{ClienteC.registrar()}" update="mensaje :Regis"/>
+                    <p:spacer height="30"/>
+                </h:form>
+            </center>
+        </h:body>
+    </ui:define>
+
+</ui:composition>

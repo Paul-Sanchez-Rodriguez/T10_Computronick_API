@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>Computronick</title>
+            </f:facet>
+            <f:event listener="#{VentasC.listarVenta()}" type="preRenderView" />
+
+        </h:head>
+
+        <h:body>
+            <center> 
+                <h2>Listado de Venta</h2>
+            </center>   
+            <p:growl id="mensaje" severity="info,error" showDetail="true" showSummary="true" />
+
+            <h:form>
+                <p:spacer width="30"/>
+                <p:button value="Nueva Venta" outcome="agregarVenta.xhtml" icon="pi pi-plus" />
+                <p:spacer width="30 px" />
+                <h:commandLink>
+                    <h:graphicImage url="/Image/Excel.png" width="60px"/>
+                    <p:dataExporter type="xls" target=":formtblVentas:TablasVistaVenta" fileName="Lista de Ventas" />
+                </h:commandLink>
+            </h:form>
+            <center>
+
+                <h:form id="formtblVentas">
+                    <p:dataTable var="tblVentasVistas" id="TablasVistaVenta" value="#{VentasC.listarventa}">
+
+                        <p:column headerText="Nro Venta" style="width: 60px; text-align: center">
+                            <h:outputText value="#{tblVentasVistas.codigoVenta}"/>
+                        </p:column>
+                        <p:column headerText="Nombre del cliente" style="width: 300px; text-align: center">
+                            <h:outputText value="#{tblVentasVistas.datos}"/>
+                        </p:column>
+                        <p:column headerText="Fecha de Venta" style="width: 100px; text-align: center">
+                            <h:outputText value="#{tblVentasVistas.fecha}"/>
+                        </p:column>
+                        <!--        <p:column headerText="Tipo de Pago">
+                                    <h:outputText value="{tblVentasVistas.tipoDePago}"/>
+                                </p:column>-->
+
+                    </p:dataTable>
+                </h:form>
+            </center>
+
+        </h:body>
+    </ui:define>
+
+</ui:composition>

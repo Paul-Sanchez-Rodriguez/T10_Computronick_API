@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+            <f:event listener="#{proveedorC.listar()}" type="preRenderView" />
+
+        </h:head>
+
+        <h:body>
+            <center> 
+                <h2>Listado de Proovedores</h2>
+            </center>   
+            <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+            <h:form >
+                <center>
+                    <h:commandLink>
+                        <h:graphicImage url="/Image/Excel.png" width="50px"/>
+                        <p:dataExporter type="xls" target=":ListarPro:tablapro" fileName="Listado de Proveedores"  />
+                    </h:commandLink>
+                </center>
+            </h:form>
+            <h:form id="ListarPro">
+                <p:dataTable var="tblpro" id="tablapro" value="#{proveedorC.listadoPro}" rows="5" 
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="1,5,{ShowAll|'All'}" 
+                             selection="#{proveedorC.pro}" rowKey="#{tblpro.IDPROV}"
+                             selectionMode="single" resizableColumns="true">
+
+                    <f:facet name="header">
+                        <p:selectOneMenu value="#{proveedorC.caso}">
+                            <f:selectItem noSelectionOption="true" itemLabel="Todos" itemValue="3"/>
+                            <f:selectItem noSelectionOption="true" itemLabel="Activos" itemValue="1"/>
+                            <f:selectItem noSelectionOption="true" itemLabel="Inactivos" itemValue="2"/>
+                            <p:ajax listener="#{proveedorC.listar()}" update="ListarPro:tablapro"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <p:column headerText="RUC" filterBy="#{tblpro.RUC}" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.RUC}"/>
+                    </p:column>
+                    <p:column headerText="Empresa" filterBy="#{tblpro.NOMPREPROV}"  style="text-align: center">
+                        <p:outputLabel value="#{tblpro.NOMPREPROV}" />
+                    </p:column>
+                    <p:column headerText="Nombre" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.NOMBRE}"/>
+
+                    </p:column>
+                    <p:column headerText="Apellido" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.APELLIDO}"/>
+
+                    </p:column>
+                    <p:column headerText="Direccion" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.DIRECCION}"/>
+                    </p:column>
+                    <p:column headerText="Celular" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.CELULAR}"/>
+                    </p:column>
+                    <p:column headerText="Distrito" style="text-align: center">
+                        <p:outputLabel value="#{tblpro.DISUBI}"/>
+                    </p:column>
+                </p:dataTable>
+
+                <p:contextMenu for="tablapro">
+                    <p:menuitem value="Modificar" oncomplete="PF('wdlgDatos').show()" update="formModificarPro"/>
+                    <p:menuitem value="Eliminar"  actionListener="#{proveedorC.eliminar()}" update="tablapro">
+                        <p:confirm header="confirmacion" icon="pi pi-search" message="¿Deseas Eliminar?"/>
+                    </p:menuitem>
+                    <p:menuitem value="habilitar" actionListener="#{proveedorC.habilitar()}" update="tablapro"/>
+                </p:contextMenu>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
+                </p:confirmDialog>
+            </h:form>
+            <p:dialog header="Datos del Proveedor" widgetVar="wdlgDatos" id="dlgDatos">
+                <h:form id="formModificarPro">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="RUC"/>
+                        <p:inputText value="#{proveedorC.pro.RUC}" id="RUC" maxlength="11" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Empresa"/>
+                        <p:inputText value="#{proveedorC.pro.NOMPREPROV}" id="empresa" maxlength="20" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Nombre"/>
+                        <p:inputText value="#{proveedorC.pro.NOMBRE}" id="nombre" maxlength="20" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Apellido"/>
+                        <p:inputText value="#{proveedorC.pro.APELLIDO}" id="apellido" maxlength="20" required="true" >
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Direccion"/>
+                        <p:inputText value="#{proveedorC.pro.DIRECCION}" id="direccion" maxlength="20" required="true" />
+                        <p:outputLabel value="Celular"/>
+                        <p:inputText value="#{proveedorC.pro.CELULAR}" id="celular" maxlength="9" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgDatos').hide();" actionListener="#{proveedorC.limpiar()}" />
+                        <p:commandButton id="modicardialog" value="Modificar" actionListener="#{proveedorC.modificar()}" 
+                                         update="formModificarPro :ListarPro:tablapro mensaje" icon="pi pi-check"
+                                         oncomplete="if(!args.validationFailed)PF('wdlgDatos').hide();"/>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+        </h:body>
+    </ui:define>
+
+</ui:composition>

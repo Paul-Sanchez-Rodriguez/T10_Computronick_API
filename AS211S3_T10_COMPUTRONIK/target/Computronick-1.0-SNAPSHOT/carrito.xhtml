@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <h:head>
+        <title>TODO supply a title</title>
+        <!--        <p:button icon="pi pi-home" value="Compras Realizadas" outcome="VistaVenta" style="float: right"/>
+                <p:button icon="pi pi-home" value="Productos" outcome="index"/>-->
+    </h:head>
+    <body>
+    <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+    <h:form id="formcarrito">
+        <p:dataTable var="tblProlis" id="tablaprod" value="#{CarritoC.listarVentaDealle}" rows="5" 
+                     paginator="true"> 
+            <p:column headerText="Codigo Producto">
+                <h:outputText value="#{tblProlis.codigoPRoducto}"  />
+            </p:column>
+            <p:column headerText="Nombre de Producto">
+                <h:outputText value="#{tblProlis.nompro}"  />
+            </p:column>
+            <p:column headerText="Descripcion">
+                <h:outputText value="#{tblProlis.descripcion}"  />
+            </p:column>
+            <p:column headerText="Stock">
+                <h:outputText value="#{tblProlis.stock}"  />
+            </p:column>
+            <p:column headerText="Cantidad">
+                <h:outputText value="#{tblProlis.cantidad}"/>     
+            </p:column>
+            <p:column headerText="Precio">
+                <h:outputText value="#{tblProlis.prcio}"  />
+            </p:column>
+            <p:column headerText="Subtotal" >
+                <h:outputText value="#{tblProlis.subtotal}" id="jxtsubtotal" />
+            </p:column>
+            <p:column headerText="Eliminar">
+                <p:commandButton value="X" actionListener="#{CarritoC.elimianarProductoAgregado(tblProlis.codigoPRoducto)}" update="tablaprod formcarrito:txttotal mensaje" style="background-color: coral"/>
+            </p:column>
+        </p:dataTable>
+        <div style="font-weight: bold;float: right">
+            <h:outputLabel value="Total:"/>
+            <h:outputLabel value="#{CarritoC.total}" id="txttotal"/>  
+        </div>
+    </h:form>
+    <h:form>
+
+        <p:commandButton value="Comprar" icon="pi pi-save" oncomplete="PF('reporte').show()" actionListener="#{CarritoC.registrarVenta(VentasC.cli.codigo)}" update="formcarrito:tablaprod formcarrito:txttotal mensaje"/>
+
+        <p:confirmDialog widgetVar="reporte" showEffect="fade" width="300" 
+                         message="¿Desea una boleta?" header="Boleta de Venta" severity="warn">
+            <p:commandButton value="Generar" onclick="this.form.target = '_blank'" 
+                             ajax="false" title="Boleta" actionListener="#{CarritoC.verReportePDFEST()}" icon="pi pi-print"/>
+
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                             onclick="PF('reporte').hide()"/>
+        </p:confirmDialog>
+    </h:form>
+</body>
+</html>

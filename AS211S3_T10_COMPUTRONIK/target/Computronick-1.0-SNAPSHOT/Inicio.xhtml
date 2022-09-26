@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+            <title>PrimeFaces</title>
+        </f:facet>
+        <f:event listener="#{CarritoC.listar()}" type="preRenderView"/>
+
+    </h:head>
+
+    <h:body>
+        <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+        <h:form id="prueba">
+            <p:button icon="pi pi-shopping-cart" value="Carrito"  outcome="carrito"/>
+            <h:outputLabel value="#{LoginC.cli.nombre} #{LoginC.cli.apellido}" style="float: right; font-weight: bold"/>
+
+            <p:dataGrid var="prod" value="#{CarritoC.listadoProd}" columns="3" layout="grid"
+                        id="productos">
+
+                <f:facet name="header">
+                    Productos Registrados
+                </f:facet>
+
+                <p:panel header="#{prod.codigo}" style="text-align:center">
+
+                    <h:panelGrid columns="1" style="width:100%" >
+
+                        <img src="Image/#{prod.imagen}.png" height=" 80 px"/>
+                        <h:outputText value="Nombre : #{prod.nombre}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Marca : #{prod.marca}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Descripcion : #{prod.descripcion}" />
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="#{prod.precio_venta}" style="font-size:20px; font-weight: bold">
+                            <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="$" />
+                        </h:outputText>
+                        <p:spacer height="10 px"/>
+                        <h:outputText value="Stock : #{prod.stock}" />
+
+                    </h:panelGrid>
+                    <p:commandButton icon="pi pi-shopping-cart" value="Agregar" actionListener="#{CarritoC.agregar(prod.nombre)}" oncomplete="PF('wdlgcant').show()"/>
+                </p:panel>
+            </p:dataGrid>
+
+
+
+            <p:dialog header="ingrese la cantidad" widgetVar="wdlgcant" id="dlgcant" >
+                <h:form>
+                    <h:panelGrid columns="1">
+                        <p:outputLabel value="Cantidad"/>
+                        <p:inputText value="#{CarritoC.pro.cantidadVender}" id="cantidad"/>
+                    </h:panelGrid>         
+                </h:form>
+                <center>
+                    <p:commandButton value="ok"  action="#{CarritoC.validadorRepetido(CarritoC.pro)}" oncomplete="if(!args.validationFailed)PF('wdlgcant').hide();"/>
+                </center>
+
+            </p:dialog>
+
+        </h:form>
+    </h:body>
+
+</html>

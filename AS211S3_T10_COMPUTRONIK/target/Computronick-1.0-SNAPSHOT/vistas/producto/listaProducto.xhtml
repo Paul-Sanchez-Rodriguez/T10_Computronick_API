@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>Computronick</title>
+            </f:facet>
+            <f:event listener="#{ProductosC.listar()}" type="preRenderView"/>
+            <f:event listener="#{ProductosC.actulizarEstado()}" type="preRenderView"/>
+
+        </h:head>
+
+        <h:body>
+            <center> 
+                <h2>Listado de Proovedores</h2>
+            </center>   
+            <p:growl id="mensaje" severity="info,error" showDetail="true" showSummary="true" />
+            <h:form >
+                <center>
+                    <h:commandLink>
+                        <h:graphicImage url="/Image/Excel.png" width="50px"/>
+                        <p:dataExporter type="xls" target=":TablaProductos:tablaprov" fileName="Listado de Productos"  />
+                    </h:commandLink>
+                </center>
+            </h:form>
+            <h:form id="TablaProductos">
+                <p:dataTable var="tblprov" id="tablaprov" value="#{ProductosC.listadoProd}" rows="5" 
+                             paginator="true"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="1,5,{ShowAll|'All'}" style=""
+                             selection="#{ProductosC.prod}" rowKey="#{tblprov.codigo}"
+                             selectionMode="single" resizableColumns="true">
+
+                    <f:facet name="header">
+                        <p:selectOneMenu value="#{ProductosC.caso}"  styleClass="ticket">
+                            <f:selectItem noSelectionOption="true" itemLabel="Todos" itemValue="1"/>
+                            <f:selectItem noSelectionOption="true" itemLabel="Activos" itemValue="2" />
+                            <f:selectItem noSelectionOption="true" itemLabel="Inactivos" itemValue="3"/>
+                            <p:ajax event="change" listener="#{ProductosC.listar()}" update="TablaProductos:tablaprov"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+
+                    <p:column headerText="Codigo">
+                        <h:outputText value="#{tblprov.codigo}"/>
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{tblprov.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Marca">
+                        <h:outputText value="#{tblprov.marca}"/>
+                    </p:column>
+                    <p:column headerText="Descripcion">
+                        <h:outputText value="#{tblprov.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Precio">
+                        <h:outputText value="#{tblprov.precio_venta}"/>
+                    </p:column>
+                    <p:column headerText="Stock">
+                        <h:outputText value="#{tblprov.stock}"/>
+                    </p:column>
+
+                </p:dataTable>
+                <p:contextMenu for="tablaprov">
+                    <p:menuitem value="Modificar" oncomplete="PF('dlgProductos').show()" update="formModificar"/>
+                    <p:menuitem value="Eliminar"  actionListener="#{ProductosC.eliminar()}" update="tablaprov">
+                    </p:menuitem>
+                    <p:menuitem value="Habilitar" actionListener="#{ProductosC.habilitar()}" update="tablaprov"/>
+                </p:contextMenu>
+            </h:form>
+
+            <p:dialog header="Modificar Productos" id="Productos" widgetVar="dlgProductos">
+                <h:form id="formModificar">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Codigo del Producto"/>
+                        <h:outputLabel value="#{ProductosC.prod.codigo}"/>
+
+
+                        <h:outputLabel value="Nombre del Producto"/>    
+                        <p:inputText value="#{ProductosC.prod.nombre}" id="Nombre" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputLabel value="Marca"/>
+                        <p:inputText value="#{ProductosC.prod.marca}" id="Marca" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Descripcion"/>
+                        <p:inputText value="#{ProductosC.prod.descripcion}" id="Descripcion" required="true">
+                            <p:keyFilter regEx="/[a-zA-Z0-9-. ]/"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Compra"/>
+                        <p:inputText value="#{ProductosC.prod.precio_compra}" id="PrecioCompra" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Venta"/>
+                        <p:inputText value="#{ProductosC.prod.precio_venta}" id="PrecioVenta" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Stock"/>
+                        <p:inputText value="#{ProductosC.prod.stock}" id="Stock" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dlgProductos').hide();" actionListener="#{ProductosC.limpiar()}" />
+                        <p:commandButton id="modificardialog" value="Modificar" actionListener="#{ProductosC.Modificar()}" 
+                                         update="formModificar :TablaProductos:tablaprov mensaje" 
+                                         oncomplete="if(!args.validationFailed)PF('dlgProductos').hide();"/>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+
+        </h:body>
+    </ui:define>
+
+</ui:composition>

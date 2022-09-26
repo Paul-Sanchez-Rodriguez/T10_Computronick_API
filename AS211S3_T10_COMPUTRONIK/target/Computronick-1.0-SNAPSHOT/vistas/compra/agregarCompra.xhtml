@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+        </h:head>
+        <h:body>
+            <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+            <p:spacer height="20 px"/>
+            <h3>Registro de Proovedor</h3>
+            <p:spacer height="20 px"/>
+            <h:form id="tblProveedor">
+                <p:panelGrid columns="4" id="cabeFactura" layout="grid" columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4, p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4" styleClass="customPanelGrid" contentStyleClass="ui-fluid">
+                    <p:outputLabel value="Razon Social" />
+
+                    <p:autoComplete id="AutocompletarpROVEEDOR" value="#{CompraC.proveedor.NOMPREPROV}" completeMethod="#{CompraC.autocompleteProveedor}">
+                        <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        <p:ajax event="itemSelect" listener="#{CompraC.filtrar()}" update="txtNomEmp txtApellido txtCelar txtDireccion"/>
+                    </p:autoComplete>
+
+                    <p:outputLabel value="Ruc"/>
+                    <p:outputLabel id="txtNomEmp" value="#{CompraC.proveedor.RUC}"/>
+                    <p:outputLabel value="Nombres/Apellidos"/>
+                    <p:outputLabel id="txtApellido" value="#{CompraC.proveedor.NOMBRE} #{CompraC.proveedor.APELLIDO}"/>
+                    <p:outputLabel value="Celular"/>
+                    <p:outputLabel id="txtCelar" value="#{CompraC.proveedor.CELULAR}"/>
+                    <p:outputLabel value="Direccion"/>
+                    <p:outputLabel id="txtDireccion" value="#{CompraC.proveedor.DIRECCION}"/>
+                    <p:outputLabel   value="Fecha de compra" />
+                    <h:outputText value="#{CompraC.compra.fecha}">
+                        <f:convertDateTime pattern="dd-MM-yyyy" locale="es"/>
+                    </h:outputText>
+                </p:panelGrid>
+                <p:separator/>
+                <p:spacer width="30"/>
+                <h3>Registro de Productos</h3>
+                <p:spacer height="20 px"/>
+                <p:commandButton value="Nueva Producto" icon="pi pi-plus" oncomplete="PF('dlgProductos').show()" update="Registro_Producto"/>               
+
+                <p:separator/>
+
+                <p:panelGrid columns="4" id="detFactura" layout="grid" columnClasses="p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4, p-col-12 p-md-3 p-xl-2, p-col-12 p-md-9 p-xl-4" styleClass="customPanelGrid" contentStyleClass="ui-fluid">
+
+                    <p:outputLabel value="Nombre del Producto"/>
+                    <p:autoComplete id="autoProducto" value="#{CompraC.pro.nombre}" completeMethod="#{CompraC.autocompletePrueba}" scrollHeight="250">
+                        <p:ajax event="itemSelect" listener="#{CompraC.buscarProductos()}" update="mensaje txtStock txtPrecio"/>
+                    </p:autoComplete>
+
+                    <p:outputLabel value="Stock Disponible"/>
+                    <p:outputLabel id="txtStock" value="#{CompraC.pro.stock}"/>
+
+                    <p:outputLabel value="Precio de Compra"/>
+                    <p:outputLabel id="txtPrecio" value="#{CompraC.pro.precio_compra}">
+                        <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="S/. " />
+                    </p:outputLabel>
+
+                    <p:outputLabel value="Cantidad"/>
+                    <p:inputText id="txtCantidadCompra" value="#{CompraC.pro.cantidadCompra}" required="true">
+                        <p:keyFilter mask="num"/>
+                    </p:inputText>
+                    <p:outputLabel value="Tipo de pago"/>
+                    <p:selectOneMenu id="tipopago" styleClass="ticket" style=" width: 225px"
+                                     value="#{CompraC.compra.tipoPago}" required="true" requiredMessage="Seleccione el tipo de pago">
+                        <f:selectItem noSelectionOption="true"
+                                      itemLabel="Seleccionar"  />
+                        <f:selectItem itemLabel="Efectivo" itemValue="E"/>
+                        <f:selectItem itemLabel="Tarjeta" itemValue="T" />
+                    </p:selectOneMenu>
+                </p:panelGrid>
+                <p:separator/>
+                <p:spacer width="20"/>
+                <p:commandButton value="Agregar Producto" icon="pi pi-plus" actionListener="#{CompraC.productoNull()}" update="mensaje formTablaPro:tablaCompra txtCantidadCompra txtStock txtPrecio autoProducto formTablaPro:txtTotal"/>
+                <p:spacer width="20" />
+                <p:commandButton value="Guardar Compra" icon="pi pi-save" actionListener="#{CompraC.registroCompra(LoginC.emp.codigo)}" oncomplete="PF('reporte').show()"  update="formTablaPro:tablaCompra tblProveedor:cabeFactura tblProveedor:detFactura formTablaPro:txtTotal"/>
+                <p:spacer width="420" />
+                <p:commandButton value="Cancelar Compra" icon="pi pi-trash" actionListener="#{CompraC.limpiar()}" update="formTablaPro:tablaCompra tblProveedor:cabeFactura tblProveedor:detFactura formTablaPro:txtTotal"/>
+                <p:separator/>
+
+            </h:form>
+
+            <h:form>
+                <p:confirmDialog widgetVar="reporte" showEffect="fade" width="300" 
+                                 message="¿Desea una boleta?" header="Boleta de Venta" severity="warn">
+                    <p:commandButton value="Compra Report" onclick="this.form.target = '_blank'; PF('reporte').hide()" 
+                                     ajax="false" title="Boleta" actionListener="#{CompraC.verReportePDFEST()}" icon="pi pi-print"/>
+
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('reporte').hide()"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <p:spacer height="20 px"/>
+            <h:form id="formTablaPro">            
+                <p:dataTable id="tablaCompra" var="tblCompra" value="#{CompraC.listDetalle}" editable="true" editMode="cell"
+                             editInitEvent="dblclick" style="margin-bottom:20px">
+                    <p:ajax event="cellEdit" listener="#{CompraC.actualizarTablaTemporal()}" update="formTablaPro:txtTotal :formTablaPro:tablaCompra "/>
+
+                    <p:column headerText="Nro">
+                        <h:outputText value="#{tblCompra.codProducto}"  />
+                    </p:column>                
+                    <p:column headerText="Producto" filterBy="#{tblCompra.nombreCom}">
+                        <h:outputText value="#{tblCompra.nombreCom}"/>
+                    </p:column>
+                    <p:column headerText="Cantidad">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{tblCompra.cantCompra}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{tblCompra.nuevaCantidad}" style="width:100%" label="Cantidad"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Precio/Compra">
+                        <h:outputText value="#{tblCompra.precioCom}">
+                            <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="S/. " />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Subtotal">
+                        <h:outputText value="#{tblCompra.subtotalCompra}" id="clmSubtotal" >
+                            <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="S/. " />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-trash" actionListener="#{CompraC.eliminarProducto(tblCompra.codProducto)}" update="mensaje formTablaPro:tablaCompra formTablaPro:txtTotal"/>
+                    </p:column>
+
+                </p:dataTable>
+                <div style="font-weight: bold; float: right">
+                    <h:outputText value="Total: "/>
+                    <h:outputText value="#{CompraC.total}" id="txtTotal">
+                        <f:convertNumber type="currency" pattern="¤#0.00" currencySymbol="S/. " />
+                    </h:outputText>
+                </div>
+
+            </h:form>
+            <p:dialog header="Nuevo Producto" id="Productos" widgetVar="dlgProductos" width="800" showEffect="fade" modal="true">
+                <h:form id="Registro_Producto">
+                    <p:panelGrid columns="4">
+
+                        <h:outputText value="Codigo del Producto"/>
+                        <p:inputText value="#{ProductosC.prod.codigo}" id="Codigo" required="true">
+                            <p:keyFilter regEx="/^[a-zA-Z0-9]*$/"/>
+                        </p:inputText>
+
+
+                        <h:outputLabel value="Nombre del Producto"/>    
+                        <p:inputText value="#{ProductosC.prod.nombre}" id="Nombre" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputLabel value="Marca"/>
+                        <p:inputText value="#{ProductosC.prod.marca}" id="Marca" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Descripcion"/>
+                        <p:inputText value="#{ProductosC.prod.descripcion}" id="Descripcion" required="true">
+                            <p:keyFilter regEx="/[a-zA-Z0-9-. ]/"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Compra"/>
+                        <p:inputText value="#{ProductosC.prod.precio_compra}" id="PrecioCompra" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                            <f:convertNumber currencySymbol ="$" type ="currency"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Venta"/>
+                        <p:inputText value="#{ProductosC.prod.precio_venta}" id="PrecioVenta" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                            <f:convertNumber currencySymbol ="$" type ="currency"/>
+                        </p:inputText>
+
+                        <h:outputText value="Stock"/>
+                        <p:inputText value="#{ProductosC.prod.stock}" id="Stock" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Imagen"/>
+                        <p:inputText value="#{ProductosC.prod.imagen}" id="Image" required="true">
+                            <p:keyFilter regEx="/^[a-zA-Z0-9]*$/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Subfamilia"/>
+                        <p:selectOneMenu id="txtCategoria" value="#{ProductosC.prod.categoria}" required="true">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar"/>
+
+                            <f:selectItems value="#{ProductosC.mostrarCategoria()}" var="varCat"
+                                           itemValue="#{varCat.id}"
+                                           itemLabel="#{varCat.nombre}"/>
+
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:separator/>
+                    <p:commandButton id="btnRegistrar" value="Registrar" action="#{ProductosC.registar(ProductosC.prod)}" update="mensaje Registro_Producto" icon="pi pi-save"/>
+
+                </h:form>
+            </p:dialog>
+        </h:body>
+    </ui:define>
+
+</ui:composition>

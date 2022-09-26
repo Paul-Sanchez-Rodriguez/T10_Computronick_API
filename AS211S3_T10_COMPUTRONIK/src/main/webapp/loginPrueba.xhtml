@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/theme.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/primeicons/primeicons.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/fa/font-awesome.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/components.css" />
+<!--        <script type="text/javascript" src="#{request.contextPath}/faces/resources/jquery/jquery.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/faces/resources/core.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/faces/resources/components.js"></script>
+        <script type="text/javascript" src="#{request.contextPath}/faces/resources/jquery/jquery-plugins.js"></script>-->
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/inputswitch/inputswitch.css" />
+        <script type="text/javascript" src="#{request.contextPath}/faces/resources/inputswitch/inputswitch.js"></script>
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/css/primeflex.min.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/css/primeicons.css" />
+<!--        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/css/demo-light.css" />-->
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/faces/resources/css/layout-light.css" />
+        <script type="text/javascript">if (window.PrimeFaces) {
+                PrimeFaces.settings.locale = 'en_US';
+                PrimeFaces.settings.viewId = '/login.xhtml';
+                PrimeFaces.settings.contextPath = '/poseidon';
+                PrimeFaces.settings.cookiesSecure = false;
+            }</script>
+        <title>PrimeFaces Poseidon</title>
+        <script type="text/javascript" src="#{request.contextPath}/faces/resources/js/layout.js"></script>
+        <!--<script type="text/javascript" src="#{request.contextPath}/faces/resources/js/prism.js"></script>-->
+        <h:outputScript name="funciones.js"/>
+    </head>
+    <body class="login-body ">
+
+        <p:growl id="mensaje" severity="info,fatal,error"  showSummary="true" 
+                 showDetail="true" sticky="false" life="6000"/>
+        <div class="login-wrapper">
+            <div class="login-panel"><img id="j_idt8"  
+                                          alt="" class="logo"/>
+                <div class="login-form">
+                    <h2>Iniciar Sesion</h2>
+                    <p>¿No tienes una cuenta? <a href="/AS211S3_T10_COMPUTRONIK/faces/vistas/login/RegistroLogin.xhtml"> Inscribirse</a></p>
+                    
+
+                    <h:form >
+                        <!--                        <h:panelGrid columns="2" cellpadding="5">-->
+                        <p:inputText  value="#{LoginC.cli.username}" placeholder="Usuario" style="margin-bottom: 20px"
+                                      class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"/>
+                        <br/>
+                        <!--<p:outputLabel value="Contraseña"/>-->
+                        <p:password value="#{LoginC.cli.password}"  placeholder="Costraseña" style="margin-bottom: 20px"
+                                    class="ui-inputfield ui-inputtext ui-widget ui-state-default ui-corner-all"/>
+                        <br/>
+                        <!--                        </h:panelGrid>-->
+
+                        <p:commandButton value="Continuar" update=":mensaje" action="#{LoginC.redireccion()}"/>
+
+                    </h:form>
+                </div>
+
+                <p>A problem? <a href="#">Click here</a> and let us help you.</p>
+            </div>
+
+        </div>
+        <script>
+        
+        </script>
+    </body>
+</html>

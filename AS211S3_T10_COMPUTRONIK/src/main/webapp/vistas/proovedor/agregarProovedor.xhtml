@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+    <ui:define name="content">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+            <f:event listener="#{proveedorC.listar()}" type="preRenderView" />
+
+        </h:head>
+        <h:body>
+            <p:growl id="mensaje" severity="info, error,warn" showDetail="true" showSummary="true" />
+            <center>
+                <h2>Registro de Proveedor</h2>
+                <h:form id="tblProveedor">
+                    <p:panelGrid columns="4" id="pnlProveedor">
+                        <p:outputLabel value="API RUC"/>
+                        <p:commandButton id="btonRuc" value="Buscar" action="#{proveedorC.activarInput()}" update="mensaje :tblProveedor">
+                            <p:inputText value="#{proveedorC.pro.RUC}" label="ingrese" id="RUC" maxlength="11" required="true" requiredMessage="Ingrese un ruc"/>
+                        </p:commandButton>
+                        <p:outputLabel value="COD Ubigeo" />
+                        <p:inputText value="#{proveedorC.pro.CODIGOUBIGEO}" id="txtruc" maxlength="11" disabled="true" />
+                        <p:outputLabel value="RUC"/>
+                        <p:inputText value="#{proveedorC.pro.RUC}" id="txtRcp" disabled="#{proveedorC.rucencontrado}" maxlength="11" required="true" requiredMessage="Ingrese un ruc"/>
+                        
+                        <p:outputLabel value="Departamento"/>
+                        <p:inputText value="#{proveedorC.pro.departamento}" id="txtdepartamento" disabled="true"/>
+                        
+                        <p:outputLabel value="Razon Social"/>
+                        <p:inputText value="#{proveedorC.pro.NOMPREPROV}" id="txtempresa" maxlength="20" disabled="#{proveedorC.rucencontrado}" required="true" requiredMessage="Ingrese una razon">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        
+                        <p:outputLabel value="Provincia"/>
+                        <p:inputText value="#{proveedorC.pro.provincia}" id="txtprovincia" disabled="true"/>
+                        
+                        <p:outputLabel value="Nombre"/>
+                        <p:inputText value="#{proveedorC.pro.NOMBRE}" id="txtnombre" maxlength="50" disabled="#{proveedorC.nombre}" required="true" requiredMessage="Ingrese datos" >
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        
+                        <p:outputLabel value="Distrito"/>
+                        <p:inputText value="#{proveedorC.pro.distrito}" id="txtdistrito" disabled="true"/>
+                        
+                        <p:outputLabel value="Apellido"/>
+                        <p:inputText value="#{proveedorC.pro.APELLIDO}" id="txtapellido" maxlength="20" disabled="#{proveedorC.apellido}" required="true" requiredMessage="Ingrese datos">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+                        
+                        <p:outputLabel value="Direccion"/>
+                        <p:inputText value="#{proveedorC.pro.DIRECCION}" id="txtdireccion" maxlength="20" disabled="#{proveedorC.rucencontrado}" required="true" requiredMessage="Ingrese una direccion valida" />
+                                                
+                        <p:outputLabel value="Celular"/>
+                        <p:inputText value="#{proveedorC.pro.CELULAR}" id="txtcelular" maxlength="9" disabled="#{proveedorC.celular}" required="true" requiredMessage="Ingrese numero valido">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+                        <p:outputLabel value="Ubigeo" />
+
+                        <p:selectOneMenu id="txtUBICLI"
+                                         value="#{proveedorC.pro.CODIGOUBIGEO}" styleClass="ticket"
+                                         autoWidth="true" disabled="#{proveedorC.seleccionarubigeo}" required="true" requiredMessage="Seleccione su ubigeo">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar" />
+                            <f:selectItems value="#{proveedorC.listarUbig()}" var="ubi"
+                                           itemValue="#{ubi.codigo}"
+                                           itemLabel="#{ubi.depubi},#{ubi.provubi}, #{ubi.disubi}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:spacer height="30"/>
+                    <p:commandButton value="Registrar" icon="pi pi-check" actionListener="#{proveedorC.regitrar()}" update="mensaje :tblProveedor"/>
+                    <p:spacer width="10px"/>
+                </h:form>
+            </center>
+        </h:body>
+    </ui:define>
+
+
+</ui:composition>

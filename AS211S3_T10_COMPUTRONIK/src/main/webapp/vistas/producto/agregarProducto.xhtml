@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../plantilla/Plantilla.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:define name="content">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+
+                <title>PrimeFaces</title>
+            </f:facet>
+            <f:event listener="#{ProductosC.listar()}" type="preRenderView"/>
+        </h:head>
+        <h:body>
+            <p:growl id="mensaje" severity="info, error" showDetail="true" showSummary="true" />
+
+            <center>
+                <h2>Registro de Productos</h2>
+                <p:spacer height="30"/>   
+                <h:form id="Registro_Producto" >
+                    <p:panelGrid columns="2">
+
+                        <h:outputText value="Codigo del Producto"/>
+                        <p:inputText value="#{ProductosC.prod.codigo}" id="Codigo" required="true">
+                            <p:keyFilter regEx="/^[a-zA-Z0-9]*$/"/>
+                        </p:inputText>
+
+
+                        <h:outputLabel value="Nombre del Producto"/>    
+                        <p:inputText value="#{ProductosC.prod.nombre}" id="Nombre" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputLabel value="Marca"/>
+                        <p:inputText value="#{ProductosC.prod.marca}" id="Marca" required="true">
+                            <p:keyFilter regEx="/[a-z-A-Z- ]/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Descripcion"/>
+                        <p:inputText value="#{ProductosC.prod.descripcion}" id="Descripcion" required="true">
+                            <p:keyFilter regEx="/[a-zA-Z0-9-. ]/"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Compra"/>
+                        <p:inputText value="#{ProductosC.prod.precio_compra}" id="PrecioCompra" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                        </p:inputText>
+
+
+                        <h:outputText value="Precio de Venta"/>
+                        <p:inputText value="#{ProductosC.prod.precio_venta}" id="PrecioVenta" required="true">
+                            <p:keyFilter regEx="/^[0-9.]*$/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Stock"/>
+                        <p:inputText value="#{ProductosC.prod.stock}" id="Stock" required="true">
+                            <p:keyFilter regEx="/[0-9]/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Imagen"/>
+                        <p:inputText value="#{ProductosC.prod.imagen}" id="Image" required="true">
+                            <p:keyFilter regEx="/^[a-zA-Z0-9]*$/"/>
+                        </p:inputText>
+
+                        <h:outputText value="Categoria"/>
+                        <p:selectOneMenu id="txtCategoria" value="#{ProductosC.cat.id}" required="true">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar"/>
+
+                            <f:selectItems value="#{ProductosC.mostrarCategoria()}" var="varCat"
+                                           itemValue="#{varCat.id}"
+                                           itemLabel="#{varCat.nombre}"/>
+                            <p:ajax listener="#{ProductosC.listaSubCategoria()}" update="txtSubCategoria"/>
+                        </p:selectOneMenu>
+
+                        <h:outputText value="Subcategoria"/>
+                        <p:selectOneMenu id="txtSubCategoria" value="#{ProductosC.prod.categoria}" required="true">
+
+                            <f:selectItem noSelectionOption="true"
+                                          itemLabel="Seleccionar"/>
+
+                            <f:selectItems value="#{ProductosC.listaSubfamilia}" var="varSubCat"
+                                           itemValue="#{varSubCat.id}"
+                                           itemLabel="#{varSubCat.nombre}"/>
+
+                        </p:selectOneMenu>
+
+
+                    </p:panelGrid>
+                    <p:spacer height=" 30"/>
+                    <p:commandButton id="btnRegistrar" value="Registar" action="#{ProductosC.registar(ProductosC.prod)}" update=":Registro_Producto mensaje"/>
+                    <p:spacer height=" 30"/>
+                </h:form>
+            </center>
+        </h:body>
+    </ui:define>
+
+</ui:composition>

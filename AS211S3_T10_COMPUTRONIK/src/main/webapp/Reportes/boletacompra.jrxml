@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.18.1.final using JasperReports Library version 6.18.1-9d75d1969e774d4f179fb3be8401e98a0e6d1611  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="boletacompra" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="62138e39-ca12-424e-a6ce-e7aa127b0ea2">
+	<property name="com.jaspersoft.studio.data.sql.tables">
+		<![CDATA[IlByb3ZlZWRvcl9Db21wcmEiICwxNSwxNSw0YWIxNDhlYy1iMTIyLTRjYjQtYTgwYS03OTVlYTBk
+YmFkOWE7]]>
+	</property>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="sqlserver_DBcomputronick"/>
+	<parameter name="idcom" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT "COMPRA",
+	"NOMBRE_COMPLETO",
+	"CELULAR",
+	"DIRECCION",
+	"NOMBRE_PRODUCTO",
+	"CODIGO_PRODUCTO",
+	"PRECIO",
+	"CANTIDAD",
+	"SUBTOTAL"
+FROM "Proveedor_Compra" where  "COMPRA" = $P{idcom}]]>
+	</queryString>
+	<field name="COMPRA" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="COMPRA"/>
+		<property name="com.jaspersoft.studio.field.label" value="COMPRA"/>
+	</field>
+	<field name="NOMBRE_COMPLETO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NOMBRE_COMPLETO"/>
+		<property name="com.jaspersoft.studio.field.label" value="NOMBRE_COMPLETO"/>
+	</field>
+	<field name="CELULAR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CELULAR"/>
+		<property name="com.jaspersoft.studio.field.label" value="CELULAR"/>
+	</field>
+	<field name="DIRECCION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DIRECCION"/>
+		<property name="com.jaspersoft.studio.field.label" value="DIRECCION"/>
+	</field>
+	<field name="NOMBRE_PRODUCTO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NOMBRE_PRODUCTO"/>
+		<property name="com.jaspersoft.studio.field.label" value="NOMBRE_PRODUCTO"/>
+	</field>
+	<field name="CODIGO_PRODUCTO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CODIGO_PRODUCTO"/>
+		<property name="com.jaspersoft.studio.field.label" value="CODIGO_PRODUCTO"/>
+	</field>
+	<field name="PRECIO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="PRECIO"/>
+		<property name="com.jaspersoft.studio.field.label" value="PRECIO"/>
+	</field>
+	<field name="CANTIDAD" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="CANTIDAD"/>
+		<property name="com.jaspersoft.studio.field.label" value="CANTIDAD"/>
+	</field>
+	<field name="SUBTOTAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="SUBTOTAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="SUBTOTAL"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="256" y="35" width="100" height="30" uuid="20e32ebb-3b65-4c3f-99c1-4cd9717513d8"/>
+				<text><![CDATA[ojala funcione]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement x="105" y="9" width="165" height="30" uuid="4418fbf8-e415-4bf2-af0f-d5ae201d562a"/>
+				<textFieldExpression><![CDATA[$F{NOMBRE_COMPLETO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
